@@ -23,7 +23,7 @@
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.15.1",
     "enzyme-to-json": "^3.4.2",
-    "jest": "^26.4.2",
+    "jest": "^27.0.6",
     "react": "^16.6.1",
     "react-dom": "^16.6.1",
     "ts-jest": "^25.1.0",
