@@ -63,6 +63,7 @@ export interface IShortcutProviderRenderProps extends IShortcutProviderState {
     title: string,
     description: string,
   ) => void
+  setEnabled?: (enable: boolean) => void
   triggerShortcut?: (key: string) => any
   unregisterShortcut?: (keys: string[]) => void
 }
@@ -117,6 +118,7 @@ export class ShortcutProvider extends React.PureComponent<IShortcutProviderProps
   sequenceListeners: ISingleShortcutListener = {}
   sequenceTimer?: number
   shortcuts: IShortcut[] = []
+  enabled: boolean = true
 
   readonly state: IShortcutProviderState = {
     shortcuts: [],
@@ -182,6 +184,9 @@ export class ShortcutProvider extends React.PureComponent<IShortcutProviderProps
    * Handle "keydown" events and run the appropriate registered method
    */
   keyDown = e => {
+    if (!this.enabled) {
+      return
+    }
     const { ignoreKeys = [], ignoreTagNames, preventDefault = true } = this.props
     const target = e.target as HTMLElement
     // ignore listening when certain elements are focused
@@ -269,6 +274,10 @@ export class ShortcutProvider extends React.PureComponent<IShortcutProviderProps
    * Unset the previously pressed keys
    */
   keyUp = e => {
+    if (!this.enabled) {
+      return
+    }
+
     const keysUp: string[] = []
     const key: string = e.key?.toLowerCase()
 
@@ -430,6 +439,12 @@ export class ShortcutProvider extends React.PureComponent<IShortcutProviderProps
       this.listeners[transformKey].forEach(method => method())
     }
   }
+  /**
+   * Enable or disable all shortcuts
+   */
+  setEnabled = (enable: boolean) => {
+    this.enabled = enable
+  }
 
   /**
    * Remove a shortcut from the application
@@ -478,6 +493,7 @@ export class ShortcutProvider extends React.PureComponent<IShortcutProviderProps
     const providerProps: IShortcutProviderRenderProps = {
       registerSequenceShortcut: this.registerSequenceShortcut,
       registerShortcut: this.registerShortcut,
+      setEnabled: this.setEnabled,
       shortcuts,
       triggerShortcut: this.triggerShortcut,
       unregisterShortcut: this.unregisterShortcut,
